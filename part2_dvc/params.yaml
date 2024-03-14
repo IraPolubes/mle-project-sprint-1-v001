@@ -1,0 +1,7 @@
+index_col: 'flat_id'
+add_drop_index_col: ['building_id']
+target_col: ['target']
+bool_index: ['is_apartment', 'studio', 'has_elevator']
+cat_index: ['building_type_int']
+metrics: 'r2_score'  # gives more weight to larger errors
+CLEAN_DATASET_TABLE: 'clean_flat_price_predict'

@@ -1,0 +1,104 @@
+schema: '2.0'
+stages:
+  get_data:
+    cmd: python3.10 scripts/data.py
+    deps:
+    - path: scripts/data.py
+      hash: md5
+      md5: a5b0a605359c271cbced21d1b6d695ae
+      size: 1021
+    params:
+      params.yaml:
+        index_col: flat_id
+    outs:
+    - path: data/initial_data.csv
+      hash: md5
+      md5: e05ccd2375b0519df05f886b4dda42eb
+      size: 107783
+      cloud:
+        my_storage:
+          etag: e05ccd2375b0519df05f886b4dda42eb
+          version_id: 000613A44D02027E
+  fit_model:
+    cmd: python3.10 scripts/fit.py
+    deps:
+    - path: data/initial_data.csv
+      hash: md5
+      md5: e05ccd2375b0519df05f886b4dda42eb
+      size: 107783
+    - path: scripts/fit.py
+      hash: md5
+      md5: 98697969122bd9c20a6af4a5a6ab1da0
+      size: 1663
+    params:
+      params.yaml:
+        add_drop_index_col:
+        - building_id
+        bool_index:
+        - is_apartment
+        - studio
+        - has_elevator
+        cat_index:
+        - building_type_int
+        index_col: flat_id
+        target_col:
+        - target
+    outs:
+    - path: data/X_test.csv
+      hash: md5
+      md5: 6a1b8d99b7a0f2496c62a9319eca85cd
+      size: 18285
+      cloud:
+        my_storage:
+          etag: 6a1b8d99b7a0f2496c62a9319eca85cd
+          version_id: 000613A44D01BEE0
+    - path: data/y_test.csv
+      hash: md5
+      md5: 3f753cdaa47c681d81932f985b9c9793
+      size: 1382
+      cloud:
+        my_storage:
+          etag: 3f753cdaa47c681d81932f985b9c9793
+          version_id: 000613A44D01EC5D
+    - path: models/fitted_model.pkl
+      hash: md5
+      md5: 010f0202067236fbd8bd15aa140605b7
+      size: 3534
+      cloud:
+        my_storage:
+          etag: 010f0202067236fbd8bd15aa140605b7
+          version_id: 000613A44D01EB50
+  evaluate_model:
+    cmd: python3.10 scripts/evaluate.py
+    deps:
+    - path: data/X_test.csv
+      hash: md5
+      md5: 6a1b8d99b7a0f2496c62a9319eca85cd
+      size: 18285
+    - path: data/y_test.csv
+      hash: md5
+      md5: 3f753cdaa47c681d81932f985b9c9793
+      size: 1382
+    - path: models/fitted_model.pkl
+      hash: md5
+      md5: 010f0202067236fbd8bd15aa140605b7
+      size: 3534
+    - path: scripts/evaluate.py
+      hash: md5
+      md5: be40e89f2971e66ff9d414fc73fba5df
+      size: 1084
+    params:
+      params.yaml:
+        index_col: flat_id
+        metrics: r2_score
+        target_col:
+        - target
+    outs:
+    - path: evaluation_results/res.json
+      hash: md5
+      md5: e3fc2b93587ddbcb1be1bf0a45c9b37e
+      size: 29
+      cloud:
+        my_storage:
+          etag: e3fc2b93587ddbcb1be1bf0a45c9b37e
+          version_id: 000613A44D0114E2

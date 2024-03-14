@@ -1,0 +1,37 @@
+stages:
+  get_data:
+    cmd: python3.10 scripts/data.py
+    deps:
+      - scripts/data.py
+    params:
+      - index_col
+    outs:
+      - data/initial_data.csv
+  fit_model:
+    cmd: python3.10 scripts/fit.py
+    deps:
+      - data/initial_data.csv
+      - scripts/fit.py
+    params:
+      - index_col
+      - target_col
+      - add_drop_index_col
+      - bool_index
+      - cat_index
+    outs:
+      - models/fitted_model.pkl
+      - data/X_test.csv
+      - data/y_test.csv
+  evaluate_model:
+    cmd: python3.10 scripts/evaluate.py
+    deps:
+      - models/fitted_model.pkl
+      - scripts/evaluate.py
+      - data/X_test.csv
+      - data/y_test.csv
+    params:
+      - index_col
+      - target_col
+      - metrics
+    outs:
+      - evaluation_results/res.json

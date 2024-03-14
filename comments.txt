@@ -1,0 +1,37 @@
+Добрый день,
+У меня нет бэкграунда в дата саенс, кроме общих знаний что например
+не должно быть линейной зависимости между признаками для линейной регрессии
+и что она с выбросами плохо работает.
+Если есть какие-то замечания по шагам изучения данных, пожалуйста
+прокоментируйте более подробно чем для кого-то с опытом. Спасибо!
+
+
+Вопрос 1:
+Был странный момент: я нашла как убирать коррелирующие признаки,
+
+    #Убираем коррелирующие признаки:
+    features_to_analyze = data.drop(columns=drop_index_col + target_col)
+    corr_matrix = features_to_analyze.corr().abs()
+    upper = corr_matrix.where(np.triu(np.ones(corr_matrix.shape), k=1).astype(np.bool_))
+    highly_correlated_features = [column for column in upper.columns if any(upper[column] > 0.8)]
+    data_reduced = data.drop(columns=highly_correlated_features)
+
+    # для масштабирования выделим только нумер. признаки без бинарных и катег. из отфильтрованных
+    bool_features_still_present = [col for col in bool_index if col in data_reduced.columns]
+    cat_features_still_present = [col for col in cat_index if col in data_reduced.columns]
+    num_features = [
+        col for col in data_reduced.columns if col not in (
+            bool_features_still_present + cat_features_still_present + drop_index_col + target_col
+            )
+            ]
+
+но после этого r2_score ухудшилась, стала 0.44
+
+Без этого на очищенном датасете r2_score она была 0.54 (тоже не очень, но лучше).
+Как тогда настраивать корреляцию и нужно ли?
+
+Вопрос2:
+Целесообразность функций в юпитер-тетрадке. Зачем нужен этот шаг а не напрямую писать код в своей среде разарботки?
+Мы не можем из этого формата импортировать в ДАГ
+поэтому я сразу писала код в файлах питона в Visual Studio Code.
+Но если нужно то прилагаю их в файле юпитера: notebooks/dag2_notebook.ipynb
